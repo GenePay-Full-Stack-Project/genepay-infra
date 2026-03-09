@@ -1,0 +1,22 @@
+---
+- name: Apply Nginx Ingress Controller manifest
+  shell: >
+    kubectl apply
+    --kubeconfig {{ k3s_kubeconfig_path }}
+    -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/{{ ingress_nginx_version }}/deploy/static/provider/cloud/deploy.yaml
+  register: ingress_result
+  changed_when: "'created' in ingress_result.stdout or 'configured' in ingress_result.stdout"
+
+- name: Wait for Nginx Ingress Controller pod to become Ready
+  shell: >
+    kubectl wait pod
+    --namespace ingress-nginx
+    --selector=app.kubernetes.io/component=controller
+    --for=condition=Ready
+    --timeout=180s
+    --kubeconfig {{ k3s_kubeconfig_path }}
+  register: ingress_wait
+  retries: 5
+  delay: 20
+  until: ingress_wait.rc == 0
+  changed_when: false

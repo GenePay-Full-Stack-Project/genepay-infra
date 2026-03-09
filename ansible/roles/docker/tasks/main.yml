@@ -1,0 +1,55 @@
+---
+- name: Install Docker
+  dnf:
+    name: docker
+    state: present
+
+- name: Enable and start Docker
+  systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Add ec2-user to docker group
+  user:
+    name: ec2-user
+    groups: docker
+    append: true
+
+- name: Install amazon-ecr-credential-helper
+  dnf:
+    name: amazon-ecr-credential-helper
+    state: present
+
+- name: Create .docker config directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - /root/.docker
+    - /home/ec2-user/.docker
+
+- name: Write Docker ECR credential helper config (root)
+  copy:
+    dest: /root/.docker/config.json
+    mode: "0600"
+    content: |
+      {
+        "credHelpers": {
+          "{{ aws_region }}.amazonaws.com": "ecr-login"
+        }
+      }
+
+- name: Write Docker ECR credential helper config (ec2-user)
+  copy:
+    dest: /home/ec2-user/.docker/config.json
+    owner: ec2-user
+    group: ec2-user
+    mode: "0600"
+    content: |
+      {
+        "credHelpers": {
+          "{{ aws_region }}.amazonaws.com": "ecr-login"
+        }
+      }

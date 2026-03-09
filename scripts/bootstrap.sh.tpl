@@ -1,6 +1,10 @@
 #!/bin/bash
-# Bootstrap script for GenePay K3s single-node cluster
-# Runs as root via EC2 user-data on Amazon Linux 2023
+# DEPRECATED: No longer used as EC2 user_data.
+# K3s, Docker, Nginx Ingress, and ECR setup are now handled by
+# the Ansible playbook at ansible/playbook.yml
+# Kept for reference only.
+#
+# Original bootstrap script for GenePay K3s single-node cluster
 # Terraform template variables: ${ aws_region } ${ project_name }
 
 set -euo pipefail

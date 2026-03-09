@@ -1,0 +1,9 @@
+---
+# These can be overridden at runtime via --extra-vars from Terraform local-exec
+aws_region:   "ap-southeast-1"
+project_name: "genepay"
+
+k3s_version:          "v1.31.4+k3s1"
+k3s_kubeconfig_path:  /etc/rancher/k3s/k3s.yaml
+
+ingress_nginx_version: "controller-v1.11.1"

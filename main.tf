@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -202,10 +206,10 @@ resource "aws_instance" "genepay_node" {
     encrypted             = true
   }
 
-  user_data = templatefile("${path.module}/scripts/bootstrap.sh.tpl", {
-    aws_region   = var.aws_region
-    project_name = var.project_name
-  })
+  user_data = <<-USERDATA
+    #!/bin/bash
+    hostnamectl set-hostname ${var.project_name}-k3s-node
+  USERDATA
 
   tags = merge(local.common_tags, { Name = "${var.project_name}-k3s-node" })
 
@@ -221,6 +225,42 @@ resource "aws_eip" "genepay_eip" {
   instance = aws_instance.genepay_node.id
   domain   = "vpc"
   tags     = merge(local.common_tags, { Name = "${var.project_name}-eip" })
+}
+
+# ---------------------------------------------------------------------------
+# Ansible provisioner — runs after the EIP is assigned
+# Requires: ansible-playbook installed on the machine running terraform apply
+# ---------------------------------------------------------------------------
+resource "null_resource" "ansible_provisioner" {
+  depends_on = [aws_eip.genepay_eip]
+
+  triggers = {
+    instance_id = aws_instance.genepay_node.id
+  }
+
+  # Block until SSH is available on the new instance
+  provisioner "remote-exec" {
+    inline = ["echo 'SSH is ready'"]
+    connection {
+      type        = "ssh"
+      host        = aws_eip.genepay_eip.public_ip
+      user        = "ec2-user"
+      private_key = file(pathexpand("~/.ssh/${var.key_pair_name}.pem"))
+      timeout     = "5m"
+    }
+  }
+
+  # Run the Ansible playbook from the local machine
+  provisioner "local-exec" {
+    command = <<-CMD
+      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+        -i '${aws_eip.genepay_eip.public_ip},' \
+        -u ec2-user \
+        --private-key ~/.ssh/${var.key_pair_name}.pem \
+        --extra-vars 'aws_region=${var.aws_region} project_name=${var.project_name}' \
+        ${path.module}/ansible/playbook.yml
+    CMD
+  }
 }
 
 # ---------------------------------------------------------------------------

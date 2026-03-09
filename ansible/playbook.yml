@@ -1,0 +1,26 @@
+---
+- name: GenePay — K3s single-node cluster setup
+  hosts: all
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Update all packages
+      dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+
+    - name: Install common utilities
+      dnf:
+        name:
+          - jq
+          - curl
+          - git
+        state: present
+
+  roles:
+    - role: docker
+    - role: k3s
+    - role: ingress
+    - role: ecr

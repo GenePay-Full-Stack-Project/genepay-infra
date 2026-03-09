@@ -1,0 +1,37 @@
+---
+- name: Write ECR pull secret refresh script
+  copy:
+    dest: /usr/local/bin/ecr-k3s-login
+    mode: "0755"
+    content: |
+      #!/bin/bash
+      # Refreshes the ECR imagePullSecret in the default K3s namespace.
+      # ECR tokens expire in 12 h — scheduled via cron every 6 h.
+      set -euo pipefail
+
+      REGION="{{ aws_region }}"
+      ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      ECR_PASSWD=$(aws ecr get-login-password --region "$REGION")
+      REGISTRY="$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com"
+      KUBECONFIG="{{ k3s_kubeconfig_path }}"
+
+      kubectl create secret docker-registry ecr-pull-secret \
+        --docker-server="$REGISTRY" \
+        --docker-username=AWS \
+        --docker-password="$ECR_PASSWD" \
+        --namespace default \
+        --dry-run=client -o yaml | kubectl apply -f -
+
+      echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) — ECR pull secret refreshed ($REGISTRY)"
+
+- name: Run ECR login helper to create initial token
+  shell: /usr/local/bin/ecr-k3s-login
+  changed_when: true
+
+- name: Schedule ECR token refresh every 6 hours via cron
+  cron:
+    name: "GenePay — refresh ECR pull secret"
+    minute: "0"
+    hour: "*/6"
+    job: "/usr/local/bin/ecr-k3s-login >> /var/log/ecr-login.log 2>&1"
+    user: root
