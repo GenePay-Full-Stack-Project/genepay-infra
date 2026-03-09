@@ -3,6 +3,7 @@
 aws_region:   "ap-southeast-1"
 project_name: "genepay"
 
+ansible_user:         ubuntu
 k3s_version:          "v1.31.4+k3s1"
 k3s_kubeconfig_path:  /etc/rancher/k3s/k3s.yaml
 

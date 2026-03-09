@@ -1,8 +1,46 @@
 ---
-- name: Install Docker
-  dnf:
-    name: docker
+- name: Update apt cache
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install Docker prerequisites
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
     state: present
+
+- name: Add Docker GPG key
+  shell: |
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+      -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+  args:
+    creates: /etc/apt/keyrings/docker.asc
+
+- name: Add Docker apt repository
+  shell: |
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+      https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+      > /etc/apt/sources.list.d/docker.list
+  args:
+    creates: /etc/apt/sources.list.d/docker.list
+
+- name: Install Docker Engine
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: true
 
 - name: Enable and start Docker
   systemd:
@@ -10,14 +48,14 @@
     state: started
     enabled: true
 
-- name: Add ec2-user to docker group
+- name: Add ubuntu user to docker group
   user:
-    name: ec2-user
+    name: ubuntu
     groups: docker
     append: true
 
 - name: Install amazon-ecr-credential-helper
-  dnf:
+  apt:
     name: amazon-ecr-credential-helper
     state: present
 
@@ -28,7 +66,7 @@
     mode: "0755"
   loop:
     - /root/.docker
-    - /home/ec2-user/.docker
+    - /home/ubuntu/.docker
 
 - name: Write Docker ECR credential helper config (root)
   copy:
@@ -41,11 +79,11 @@
         }
       }
 
-- name: Write Docker ECR credential helper config (ec2-user)
+- name: Write Docker ECR credential helper config (ubuntu)
   copy:
-    dest: /home/ec2-user/.docker/config.json
-    owner: ec2-user
-    group: ec2-user
+    dest: /home/ubuntu/.docker/config.json
+    owner: ubuntu
+    group: ubuntu
     mode: "0600"
     content: |
       {

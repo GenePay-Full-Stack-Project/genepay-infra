@@ -166,15 +166,15 @@ resource "aws_iam_instance_profile" "genepay_profile" {
 }
 
 # ---------------------------------------------------------------------------
-# Latest Amazon Linux 2023 AMI
+# Latest Ubuntu 24.04 LTS AMI (Canonical)
 # ---------------------------------------------------------------------------
-data "aws_ami" "al2023" {
+data "aws_ami" "ubuntu" {
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
-    values = ["al2023-ami-*-x86_64"]
+    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
   }
 
   filter {
@@ -192,7 +192,7 @@ data "aws_ami" "al2023" {
 # EC2 Instance — K3s single-node control plane
 # ---------------------------------------------------------------------------
 resource "aws_instance" "genepay_node" {
-  ami                    = data.aws_ami.al2023.id
+  ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
   key_name               = var.key_pair_name
   iam_instance_profile   = aws_iam_instance_profile.genepay_profile.name
@@ -209,6 +209,8 @@ resource "aws_instance" "genepay_node" {
   user_data = <<-USERDATA
     #!/bin/bash
     hostnamectl set-hostname ${var.project_name}-k3s-node
+    # Ensure SSH is ready for the ubuntu user before Ansible connects
+    cloud-init status --wait || true
   USERDATA
 
   tags = merge(local.common_tags, { Name = "${var.project_name}-k3s-node" })
@@ -244,7 +246,7 @@ resource "null_resource" "ansible_provisioner" {
     connection {
       type        = "ssh"
       host        = aws_eip.genepay_eip.public_ip
-      user        = "ec2-user"
+      user        = "ubuntu"
       private_key = file(pathexpand("~/.ssh/${var.key_pair_name}.pem"))
       timeout     = "5m"
     }
@@ -255,7 +257,7 @@ resource "null_resource" "ansible_provisioner" {
     command = <<-CMD
       ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
         -i '${aws_eip.genepay_eip.public_ip},' \
-        -u ec2-user \
+        -u ubuntu \
         --private-key ~/.ssh/${var.key_pair_name}.pem \
         --extra-vars 'aws_region=${var.aws_region} project_name=${var.project_name}' \
         ${path.module}/ansible/playbook.yml

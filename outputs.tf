@@ -15,7 +15,7 @@ output "public_dns" {
 
 output "ssh_command" {
   description = "Ready-to-use SSH command"
-  value       = "ssh -i ~/.ssh/${var.key_pair_name}.pem ec2-user@${aws_eip.genepay_eip.public_ip}"
+  value       = "ssh -i ~/.ssh/${var.key_pair_name}.pem ubuntu@${aws_eip.genepay_eip.public_ip}"
 }
 
 output "ecr_repository_urls" {
@@ -25,5 +25,5 @@ output "ecr_repository_urls" {
 
 output "kubeconfig_fetch_command" {
   description = "Command to copy K3s kubeconfig from the instance after bootstrap"
-  value       = "scp -i ~/.ssh/${var.key_pair_name}.pem ec2-user@${aws_eip.genepay_eip.public_ip}:/etc/rancher/k3s/k3s.yaml ~/.kube/genepay-k3s.yaml && sed -i 's/127.0.0.1/${aws_eip.genepay_eip.public_ip}/g' ~/.kube/genepay-k3s.yaml"
+  value       = "scp -i ~/.ssh/${var.key_pair_name}.pem ubuntu@${aws_eip.genepay_eip.public_ip}:/etc/rancher/k3s/k3s.yaml ~/.kube/genepay-k3s.yaml && sed -i 's/127.0.0.1/${aws_eip.genepay_eip.public_ip}/g' ~/.kube/genepay-k3s.yaml"
 }

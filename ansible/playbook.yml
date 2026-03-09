@@ -6,17 +6,17 @@
 
   pre_tasks:
     - name: Update all packages
-      dnf:
-        name: "*"
-        state: latest
+      apt:
+        upgrade: dist
         update_cache: true
 
     - name: Install common utilities
-      dnf:
+      apt:
         name:
           - jq
           - curl
           - git
+          - unzip
         state: present
 
   roles:
