@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: genepay
+resources:
+  - namespace.yaml
+  - secret.yaml
+  - configmap.yaml
+  - postgres.yaml
+  - biometric-service.yaml
+  - blockchain-relay.yaml
+  - payment-service.yaml
+  - admin-dashboard.yaml
+  - blockchain-dashboard.yaml
+  - ingress.yaml

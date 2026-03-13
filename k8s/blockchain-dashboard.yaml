@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blockchain-dashboard
+  namespace: genepay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blockchain-dashboard
+  template:
+    metadata:
+      labels:
+        app: blockchain-dashboard
+    spec:
+      containers:
+        - name: blockchain-dashboard
+          image: YOUR_ECR_URI/genepay-blockchain-dashboard:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          env:
+            - name: VITE_RPC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: SEPOLIA_RPC_URL
+            - name: VITE_CONTRACT_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: CONTRACT_ADDRESS
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blockchain-dashboard
+  namespace: genepay
+spec:
+  selector:
+    app: blockchain-dashboard
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  type: ClusterIP

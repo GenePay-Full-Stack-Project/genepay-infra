@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genepay-config
+  namespace: genepay
+data:
+  # Shared
+  APP_ENV: production
+  LOG_LEVEL: INFO
+
+  # PostgreSQL
+  DB_NAME: genepay_db
+  DB_USERNAME: postgres
+  DB_PORT: "5432"
+
+  # JWT
+  JWT_ALGORITHM: HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+  JWT_EXPIRATION: "86400000"
+  JWT_REFRESH_EXPIRATION: "604800000"
+
+  # Biometric
+  MONGO_DATABASE: genepay_db
+  BIOMETRIC_DEBUG: "False"
+  FACE_RECOGNITION_TOLERANCE: "0.6"
+  FACE_ENCODING_MODEL: large
+  MIN_FACE_SIZE: "100"
+  ENABLE_LIVENESS_DETECTION: "False"
+  LIVENESS_THRESHOLD: "0.7"
+  LIVENESS_MIN_SHARPNESS: "50.0"
+  LIVENESS_MIN_BRIGHTNESS: "40.0"
+  LIVENESS_MAX_BRIGHTNESS: "220.0"
+  MAX_IMAGE_SIZE_MB: "5"
+  BIOMETRIC_CORS_ORIGINS: "*"
+  API_GATEWAY_URL: http://api.genepay.local
+
+  # Blockchain relay
+  SEPOLIA_RPC_URL: https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID
+  CONTRACT_ADDRESS: 0xYourDeployedContractAddress
+  BLOCKCHAIN_NETWORK: sepolia
+
+  # Payment
+  SPRING_ENV: production
+  MAIL_HOST: smtp.gmail.com
+  MAIL_PORT: "587"
+  EMAIL_FROM: noreply@genepay.com
+  EMAIL_FROM_NAME: GenePay
+  SUPPORT_EMAIL: support@genepay.com
+  BANKING_SERVICE_URL: http://localhost:5000
+  BLOCKCHAIN_ENABLED: "true"
+  ALLOWED_ORIGINS: http://app.genepay.local,http://chain.genepay.local
+  MAX_LOGIN_ATTEMPTS: "5"
+  LOCKOUT_DURATION: "900000"
+
+  # Web dashboards
+  ADMIN_VITE_API_BASE: http://api.genepay.local

@@ -1,0 +1,183 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: genepay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment-service
+          image: YOUR_ECR_URI/genepay-payment-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: DB_NAME
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: DB_PASSWORD
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SPRING_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: SPRING_ENV
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: JWT_SECRET_KEY
+            - name: JWT_EXPIRATION
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: JWT_EXPIRATION
+            - name: JWT_REFRESH_EXPIRATION
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: JWT_REFRESH_EXPIRATION
+            - name: MAIL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: MAIL_HOST
+            - name: MAIL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: MAIL_PORT
+            - name: MAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: MAIL_USERNAME
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: MAIL_PASSWORD
+            - name: EMAIL_FROM
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: EMAIL_FROM
+            - name: EMAIL_FROM_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: EMAIL_FROM_NAME
+            - name: SUPPORT_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: SUPPORT_EMAIL
+            - name: BIOMETRIC_SERVICE_URL
+              value: http://biometric-service:8001
+            - name: BLOCKCHAIN_RELAY_URL
+              value: http://blockchain-relay:3001
+            - name: BANKING_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: BANKING_SERVICE_URL
+            - name: BIOPAY_PLATFORM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: BIOPAY_PLATFORM_TOKEN
+            - name: BLOCKCHAIN_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: BLOCKCHAIN_ENABLED
+            - name: ALLOWED_ORIGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: ALLOWED_ORIGINS
+            - name: MAX_LOGIN_ATTEMPTS
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: MAX_LOGIN_ATTEMPTS
+            - name: LOCKOUT_DURATION
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: LOCKOUT_DURATION
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: GOOGLE_CLIENT_SECRET
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: genepay-config
+                  key: LOG_LEVEL
+          readinessProbe:
+            httpGet:
+              path: /api/v1/actuator/health
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/v1/actuator/health
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: genepay
+spec:
+  selector:
+    app: payment-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
