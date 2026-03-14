@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: admin-dashboard
-          image: YOUR_ECR_URI/genepay-admin-dashboard:latest
-          imagePullPolicy: Always
+          image: udarawick/genepay-admin-dashboard:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           resources:

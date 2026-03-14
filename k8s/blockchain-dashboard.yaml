@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: blockchain-dashboard
-          image: YOUR_ECR_URI/genepay-blockchain-dashboard:latest
-          imagePullPolicy: Always
+          image: udarawick/genepay-blockchain-dashboard:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           resources:
@@ -29,13 +29,13 @@ spec:
           env:
             - name: VITE_RPC_URL
               valueFrom:
-                configMapKeyRef:
-                  name: genepay-config
+                secretKeyRef:
+                  name: genepay-secrets
                   key: SEPOLIA_RPC_URL
             - name: VITE_CONTRACT_ADDRESS
               valueFrom:
-                configMapKeyRef:
-                  name: genepay-config
+                secretKeyRef:
+                  name: genepay-secrets
                   key: CONTRACT_ADDRESS
           readinessProbe:
             httpGet:

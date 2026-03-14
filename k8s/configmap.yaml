@@ -35,8 +35,6 @@ data:
   API_GATEWAY_URL: http://api.genepay.local
 
   # Blockchain relay
-  SEPOLIA_RPC_URL: https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID
-  CONTRACT_ADDRESS: 0xYourDeployedContractAddress
   BLOCKCHAIN_NETWORK: sepolia
 
   # Payment

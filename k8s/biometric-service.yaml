@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: biometric-service
-          image: YOUR_ECR_URI/genepay-biometric-service:latest
-          imagePullPolicy: Always
+          image: udarawick/genepay-biometric-service:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8001
           resources:

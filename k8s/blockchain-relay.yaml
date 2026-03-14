@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: blockchain-relay
-          image: YOUR_ECR_URI/genepay-blockchain-service:latest
-          imagePullPolicy: Always
+          image: udarawick/genepay-blockchain-service:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3001
           resources:
@@ -29,8 +29,8 @@ spec:
           env:
             - name: SEPOLIA_RPC_URL
               valueFrom:
-                configMapKeyRef:
-                  name: genepay-config
+                secretKeyRef:
+                  name: genepay-secrets
                   key: SEPOLIA_RPC_URL
             - name: PRIVATE_KEY
               valueFrom:
@@ -39,8 +39,8 @@ spec:
                   key: PRIVATE_KEY
             - name: CONTRACT_ADDRESS
               valueFrom:
-                configMapKeyRef:
-                  name: genepay-config
+                secretKeyRef:
+                  name: genepay-secrets
                   key: CONTRACT_ADDRESS
             - name: NETWORK
               valueFrom:
