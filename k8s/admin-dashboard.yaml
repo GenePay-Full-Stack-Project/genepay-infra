@@ -13,6 +13,8 @@ spec:
       labels:
         app: admin-dashboard
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: admin-dashboard
           image: udarawick/genepay-admin-dashboard:latest

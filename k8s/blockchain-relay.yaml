@@ -13,6 +13,8 @@ spec:
       labels:
         app: blockchain-relay
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: blockchain-relay
           image: udarawick/genepay-blockchain-service:latest

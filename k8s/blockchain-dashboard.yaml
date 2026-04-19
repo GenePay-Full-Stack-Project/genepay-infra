@@ -13,6 +13,8 @@ spec:
       labels:
         app: blockchain-dashboard
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: blockchain-dashboard
           image: udarawick/genepay-blockchain-dashboard:latest

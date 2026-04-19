@@ -25,6 +25,8 @@ spec:
       labels:
         app: postgres
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: postgres
           image: postgres:15-alpine
@@ -61,12 +63,14 @@ spec:
               mountPath: /var/lib/postgresql/data
           readinessProbe:
             exec:
-              command: ["sh", "-c", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+              command:
+                ["sh", "-c", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             exec:
-              command: ["sh", "-c", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+              command:
+                ["sh", "-c", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
             initialDelaySeconds: 30
             periodSeconds: 20
       volumes:

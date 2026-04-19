@@ -12,3 +12,24 @@ resources:
   - admin-dashboard.yaml
   - blockchain-dashboard.yaml
   - ingress.yaml
+
+images:
+  - name: udarawick/genepay-admin-dashboard
+    newName: 357343207025.dkr.ecr.ap-southeast-1.amazonaws.com/genepay-admin-dashboard
+    newTag: latest
+
+  - name: udarawick/genepay-payment-service
+    newName: 357343207025.dkr.ecr.ap-southeast-1.amazonaws.com/genepay-payment-service
+    newTag: latest
+
+  - name: udarawick/genepay-biometric-service
+    newName: 357343207025.dkr.ecr.ap-southeast-1.amazonaws.com/genepay-biometric-service
+    newTag: latest
+
+  - name: udarawick/genepay-blockchain-dashboard
+    newName: 357343207025.dkr.ecr.ap-southeast-1.amazonaws.com/genepay-blockchain-dashboard
+    newTag: latest
+
+  - name: udarawick/genepay-blockchain-service
+    newName: 357343207025.dkr.ecr.ap-southeast-1.amazonaws.com/genepay-blockchain-service
+    newTag: latest
