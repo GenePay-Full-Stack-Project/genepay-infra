@@ -29,6 +29,13 @@ spec:
     - host: api.genepay.local
       http:
         paths:
+          - path: /biometric
+            pathType: Prefix
+            backend:
+              service:
+                name: biometric-service
+                port:
+                  number: 8001
           - path: /
             pathType: Prefix
             backend:
@@ -36,3 +43,34 @@ spec:
                 name: payment-service
                 port:
                   number: 8080
+    - host: bank.genepay.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: banking-system
+                port:
+                  number: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: genepay-relay-ingress
+  namespace: genepay
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: api.genepay.local
+      http:
+        paths:
+          - path: /blockchain(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: blockchain-relay
+                port:
+                  number: 3001

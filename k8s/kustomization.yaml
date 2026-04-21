@@ -11,6 +11,7 @@ resources:
   - payment-service.yaml
   - admin-dashboard.yaml
   - blockchain-dashboard.yaml
+  - banking-system.yaml
   - ingress.yaml
 
 images:
@@ -32,4 +33,8 @@ images:
 
   - name: udarawick/genepay-blockchain-service
     newName: 357343207025.dkr.ecr.ap-southeast-1.amazonaws.com/genepay-blockchain-service
+    newTag: latest
+
+  - name: udarawick/genepay-banking-system
+    newName: 357343207025.dkr.ecr.ap-southeast-1.amazonaws.com/genepay-banking-system
     newTag: latest

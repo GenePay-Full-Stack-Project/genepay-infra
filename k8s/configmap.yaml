@@ -44,9 +44,9 @@ data:
   EMAIL_FROM: noreply@genepay.com
   EMAIL_FROM_NAME: GenePay
   SUPPORT_EMAIL: support@genepay.com
-  BANKING_SERVICE_URL: http://localhost:5000
+  BANKING_SERVICE_URL: http://banking-system:5000
   BLOCKCHAIN_ENABLED: "true"
-  ALLOWED_ORIGINS: http://app.genepay.local,http://chain.genepay.local
+  ALLOWED_ORIGINS: http://app.genepay.local,http://chain.genepay.local,http://bank.genepay.local
   MAX_LOGIN_ATTEMPTS: "5"
   LOCKOUT_DURATION: "900000"
 

@@ -22,6 +22,7 @@ SERVICES=(
     "genepay-blockchain-dashboard:web/genepay-blockchain-dashboard"
     "genepay-blockchain-service:modules/genepay-blockchain-service/relay"
     "genepay-payment-service:modules/genepay-payment-service"
+    "genepay-banking-system:banking_system" 
 )
 
 for item in "${SERVICES[@]}"; do

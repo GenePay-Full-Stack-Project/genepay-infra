@@ -27,6 +27,7 @@ resource "aws_ecr_repository" "services" {
     "genepay-blockchain-service",
     "genepay-admin-dashboard",
     "genepay-blockchain-dashboard",
+    "genepay-banking-system",
   ])
 
   name                 = each.key
