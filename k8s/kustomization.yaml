@@ -12,6 +12,7 @@ resources:
   - admin-dashboard.yaml
   - blockchain-dashboard.yaml
   - banking-system.yaml
+  - clusterissuer.yaml
   - ingress.yaml
 
 images:

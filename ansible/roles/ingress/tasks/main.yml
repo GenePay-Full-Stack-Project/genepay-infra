@@ -20,3 +20,25 @@
   delay: 20
   until: ingress_wait.rc == 0
   changed_when: false
+
+- name: Install cert-manager
+  shell: >
+    kubectl apply
+    --kubeconfig {{ k3s_kubeconfig_path }}
+    -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.yaml
+  register: certmanager_result
+  changed_when: "'created' in certmanager_result.stdout or 'configured' in certmanager_result.stdout"
+
+- name: Wait for cert-manager pods to become Ready
+  shell: >
+    kubectl wait pod
+    --namespace cert-manager
+    --selector=app.kubernetes.io/instance=cert-manager
+    --for=condition=Ready
+    --timeout=180s
+    --kubeconfig {{ k3s_kubeconfig_path }}
+  register: certmanager_wait
+  retries: 5
+  delay: 20
+  until: certmanager_wait.rc == 0
+  changed_when: false
