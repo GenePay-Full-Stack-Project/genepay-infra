@@ -1,7 +1,18 @@
 ---
+- name: Fetch IMDSv2 token
+  uri:
+    url: http://169.254.169.254/latest/api/token
+    method: PUT
+    headers:
+      X-aws-ec2-metadata-token-ttl-seconds: "21600"
+    return_content: true
+  register: imds_token
+
 - name: Fetch instance public IP from EC2 IMDS
   uri:
     url: http://169.254.169.254/latest/meta-data/public-ipv4
+    headers:
+      X-aws-ec2-metadata-token: "{{ imds_token.content }}"
     return_content: true
   register: ec2_public_ip
 
@@ -19,7 +30,7 @@
         --tls-san {{ instance_public_ip }}" \
       sh -
   args:
-    creates: /usr/local/bin/k3s   # idempotent — skips if K3s already installed
+    creates: /usr/local/bin/k3s # idempotent — skips if K3s already installed
 
 - name: Wait for K3s kubeconfig to appear
   wait_for:

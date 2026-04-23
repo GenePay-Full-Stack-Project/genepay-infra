@@ -13,10 +13,12 @@ spec:
       labels:
         app: admin-dashboard
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: admin-dashboard
           image: udarawick/genepay-admin-dashboard:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
           resources:

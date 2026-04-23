@@ -13,10 +13,12 @@ spec:
       labels:
         app: biometric-service
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: biometric-service
           image: udarawick/genepay-biometric-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8001
           resources:

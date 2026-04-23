@@ -13,10 +13,12 @@ spec:
       labels:
         app: blockchain-relay
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: blockchain-relay
           image: udarawick/genepay-blockchain-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 3001
           resources:

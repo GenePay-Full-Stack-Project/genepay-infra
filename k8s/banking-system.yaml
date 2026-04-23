@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: banking-system
+  namespace: genepay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: banking-system
+  template:
+    metadata:
+      labels:
+        app: banking-system
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: banking-system
+          image: udarawick/genepay-banking-system:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "5000"
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: BANKING_MONGO_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: BANKING_JWT_SECRET
+            - name: CARD_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: genepay-secrets
+                  key: BANKING_CARD_SECRET
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+
+---
+# ClusterIP allows payment-service to call http://banking-system:5000 internally.
+# NodePort 30500 exposes the dashboard externally via http://<node-ip>:30500 without a domain.
+apiVersion: v1
+kind: Service
+metadata:
+  name: banking-system
+  namespace: genepay
+spec:
+  selector:
+    app: banking-system
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000
+      nodePort: 30500
+  type: NodePort

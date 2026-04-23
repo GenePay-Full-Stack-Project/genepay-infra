@@ -3,10 +3,20 @@ kind: Ingress
 metadata:
   name: genepay-ingress
   namespace: genepay
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - genepay-admin.corszero.com
+        - genepay-blockchain.corszero.com
+        - genepay-payment.corszero.com
+        - genepay-biometric.corszero.com
+        - genepay-nextgen.corszero.com
+      secretName: genepay-tls
   rules:
-    - host: app.genepay.local
+    - host: genepay-admin.corszero.com
       http:
         paths:
           - path: /
@@ -16,7 +26,7 @@ spec:
                 name: admin-dashboard
                 port:
                   number: 80
-    - host: chain.genepay.local
+    - host: genepay-blockchain.corszero.com
       http:
         paths:
           - path: /
@@ -26,9 +36,77 @@ spec:
                 name: blockchain-dashboard
                 port:
                   number: 80
-    - host: api.genepay.local
+    - host: genepay-payment.corszero.com
       http:
         paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: payment-service
+                port:
+                  number: 8080
+    - host: genepay-biometric.corszero.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: biometric-service
+                port:
+                  number: 8001
+    - host: genepay-nextgen.corszero.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: banking-system
+                port:
+                  number: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: genepay-relay-ingress
+  namespace: genepay
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: genepay-payment.corszero.com
+      http:
+        paths:
+          - path: /blockchain(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: blockchain-relay
+                port:
+                  number: 3001
+---
+# Handles bare IP access (no host required — matches any request without a hostname rule)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: genepay-ip-ingress
+  namespace: genepay
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /biometric
+            pathType: Prefix
+            backend:
+              service:
+                name: biometric-service
+                port:
+                  number: 8001
           - path: /
             pathType: Prefix
             backend:

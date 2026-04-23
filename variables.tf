@@ -24,7 +24,7 @@ variable "instance_type" {
       t3.xlarge (4 vCPU / 16 GB) — use if biometric/face-recognition load is heavy
   EOT
   type    = string
-  default = "t3.large"
+  default = "m7i-flex.large"
 }
 
 variable "key_pair_name" {

@@ -32,7 +32,7 @@ data:
   LIVENESS_MAX_BRIGHTNESS: "220.0"
   MAX_IMAGE_SIZE_MB: "5"
   BIOMETRIC_CORS_ORIGINS: "*"
-  API_GATEWAY_URL: http://api.genepay.local
+  API_GATEWAY_URL: https://genepay-payment.corszero.com
 
   # Blockchain relay
   BLOCKCHAIN_NETWORK: sepolia
@@ -44,11 +44,11 @@ data:
   EMAIL_FROM: noreply@genepay.com
   EMAIL_FROM_NAME: GenePay
   SUPPORT_EMAIL: support@genepay.com
-  BANKING_SERVICE_URL: http://localhost:5000
+  BANKING_SERVICE_URL: http://banking-system:5000
   BLOCKCHAIN_ENABLED: "true"
-  ALLOWED_ORIGINS: http://app.genepay.local,http://chain.genepay.local
+  ALLOWED_ORIGINS: https://genepay-admin.corszero.com,https://genepay-blockchain.corszero.com,https://genepay-nextgen.corszero.com
   MAX_LOGIN_ATTEMPTS: "5"
   LOCKOUT_DURATION: "900000"
 
   # Web dashboards
-  ADMIN_VITE_API_BASE: http://api.genepay.local
+  ADMIN_VITE_API_BASE: https://genepay-payment.corszero.com
