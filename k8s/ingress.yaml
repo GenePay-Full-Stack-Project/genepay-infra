@@ -10,11 +10,19 @@ spec:
   tls:
     - hosts:
         - genepay-admin.corszero.com
+      secretName: genepay-tls-admin
+    - hosts:
         - genepay-blockchain.corszero.com
+      secretName: genepay-tls-blockchain
+    - hosts:
         - genepay-payment.corszero.com
+      secretName: genepay-tls-payment
+    - hosts:
         - genepay-biometric.corszero.com
+      secretName: genepay-tls-biometric
+    - hosts:
         - genepay-nextgen.corszero.com
-      secretName: genepay-tls
+      secretName: genepay-tls-nextgen
   rules:
     - host: genepay-admin.corszero.com
       http:
@@ -74,7 +82,6 @@ metadata:
   namespace: genepay
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
   rules:
