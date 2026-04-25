@@ -1,6 +1,6 @@
 # Development Seeded Credentials
 
-*Generated on: Tue Apr 21 17:53:13 +0530 2026*
+*Generated on: Sat Apr 25 06:33:06 +0530 2026*
 
 Accounts inserted directly into active databases via `kubectl exec`.
 Hashes were generated dynamically at seed time — not hardcoded.
@@ -13,15 +13,18 @@ Hashes were generated dynamically at seed time — not hardcoded.
 |----------|----------------------------------------------------------------------|
 | Email    | `sysadmin@genepay.com`                                                   |
 | Password | `admin123`                                                |
-| Hash     | `$2b$10$D75akY8pULpzzitPHssF9eNk4JvWBWaerVETQQ48nTR0tOkzR95LW`                                                   |
+| Hash     | `$2b$10$CsvdWlU.8KyF2ikYMydmcuGiGRUCpFmf8gKZma33ew6ijBxQEUnCC`                                                   |
 | URL      | http://app.genepay.local/                                            |
 
-## 2. Banking System Account (MongoDB)
+## 2. Banking System Accounts (MongoDB)
 
-| Field    | Value                                                                |
-|----------|----------------------------------------------------------------------|
-| Username | `banktestuser`                                                 |
-| Password | `bankuser123`                                                 |
-| Hash     | `$2b$10$4v0c7hTHwLVIfcH8fpa3u.KV2ve2Y6PwGCGWl/VW6HMGTAag2rTOm`                                              |
-| URL      | http://bank.genepay.local/login                                      |
+| # | Username                        | Password                        | Hash (first 30)                  |
+|---|---------------------------------|---------------------------------|----------------------------------|
+| 1 | `banktestuser`        | `bankuser123`        | `$2b$10$gn0Cy2p41GgUbk0y6sRdBuh`|
+| 2 | `bankuser2`        | `bankuser456`        | `$2b$10$LwIRCFcVYBifeBB12Qxx5ua`|
+| 3 | `bankuser3`        | `bankuser789`        | `$2b$10$oCi5xt.AwPdZNSojiKa3p.Q`|
+
+URL: http://bank.genepay.local/login
+
+Each account has a virtual card provisioned with a starting balance of 100,000.
 
