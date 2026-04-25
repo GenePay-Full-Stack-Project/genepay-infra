@@ -17,7 +17,7 @@ spec:
         - name: regcred
       containers:
         - name: blockchain-relay
-          image: udarawick/genepay-blockchain-service:latest
+          image: yujiro2hanma/genepay-blockchain-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3001

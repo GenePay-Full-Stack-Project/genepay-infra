@@ -17,7 +17,7 @@ spec:
         - name: regcred
       containers:
         - name: banking-system
-          image: udarawick/genepay-banking-system:latest
+          image: yujiro2hanma/genepay-banking-system:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 5000

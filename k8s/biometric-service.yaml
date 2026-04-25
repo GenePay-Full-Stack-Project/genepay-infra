@@ -17,7 +17,7 @@ spec:
         - name: regcred
       containers:
         - name: biometric-service
-          image: udarawick/genepay-biometric-service:latest
+          image: yujiro2hanma/genepay-biometric-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8001

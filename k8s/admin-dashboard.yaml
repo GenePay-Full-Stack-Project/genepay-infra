@@ -17,7 +17,7 @@ spec:
         - name: regcred
       containers:
         - name: admin-dashboard
-          image: udarawick/genepay-admin-dashboard:latest
+          image: yujiro2hanma/genepay-admin-dashboard:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
